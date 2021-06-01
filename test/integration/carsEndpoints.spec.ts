@@ -94,10 +94,11 @@ describe('Testing the Cars API', () => {
 
 		//Assert
 		expect(response.statusCode).toBe(200);
-		expect(car.title).not.toBeNull();
-		expect(car.brand).not.toBeNull();
-		expect(car.price).not.toBeNull();
-		expect(car.age).not.toBeNull();
+		expect(car.title).toEqual(createdCar.title);
+		expect(car.brand).toEqual(createdCar.brand);
+		expect(car.price).toEqual(createdCar.price);
+		expect(car.age).toEqual(createdCar.age);
+
 	});
 
 	it('Put car should return car obj with status 200', async () => {
@@ -122,10 +123,10 @@ describe('Testing the Cars API', () => {
 
 		//Assert
 		expect(response.statusCode).toBe(200);
-		expect(car.title).not.toBeNull();
-		expect(car.brand).not.toBeNull();
-		expect(car.price).not.toBeNull();
-		expect(car.age).not.toBeNull();
+		expect(car.title).toEqual(createdCar.title);
+		expect(car.brand).toEqual(createdCar.brand);
+		expect(car.price).toEqual(createdCar.price);
+		expect(car.age).toEqual(createdCar.age);
 		expect(car.brand).toEqual(newCarBrand);
 	});
 
@@ -138,6 +139,15 @@ describe('Testing the Cars API', () => {
 		});
 		const createdCar = JSON.parse(carCreationResponse.payload);
 
+
+		const getResponse = await app.inject({
+			method: 'GET',
+			url: '/api/cars',
+		});
+		const cars = JSON.parse(getResponse.payload);
+
+		expect(cars.length === 1).toBeTruthy();
+
 		//Act
 		const response = await app.inject({
 			method: 'DELETE',
@@ -146,5 +156,11 @@ describe('Testing the Cars API', () => {
 
 		//Assert
 		expect(response.statusCode).toBe(200);
+		const afterDeletegetResponse = await app.inject({
+			method: 'GET',
+			url: '/api/cars',
+		});
+		const afterDeletecars = JSON.parse(afterDeletegetResponse.payload);
+		expect(afterDeletecars.length === 0).toBeTruthy();
 	});
 });
